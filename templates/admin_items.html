@@ -1,0 +1,275 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Reports | Campus Lost & Found</title>
+
+    <style>
+        :root {
+            --background: #F7F6F2;
+            --surface: #FFFFFF;
+            --text: #252923;
+            --muted: #73776F;
+            --green: #355744;
+            --border: #DEDFD8;
+            --red: #963F3F;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            background: var(--background);
+            color: var(--text);
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+
+        header {
+            padding: 18px 5%;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        header a {
+            color: var(--green);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .brand {
+            color: var(--text);
+            font-size: 20px;
+        }
+
+        nav {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .container {
+            width: min(1100px, 90%);
+            margin: 36px auto;
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            font-size: clamp(28px, 5vw, 38px);
+        }
+
+        .muted { color: var(--muted); }
+
+        .message {
+            margin: 18px 0;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            background: white;
+        }
+
+        .reports {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px;
+            margin-top: 26px;
+        }
+
+        .report {
+            overflow: hidden;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+        }
+
+        .report img {
+            display: block;
+            width: 100%;
+            height: 230px;
+            object-fit: cover;
+            background: #ECEDE7;
+        }
+
+        .no-image {
+            height: 150px;
+            display: grid;
+            place-items: center;
+            background: #ECEDE7;
+            color: var(--muted);
+        }
+
+        .content { padding: 20px; }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 9px;
+            margin-bottom: 8px;
+            border-radius: 3px;
+            background: #EDF2ED;
+            color: var(--green);
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        h2 {
+            margin: 0 0 10px;
+            font-size: 21px;
+            overflow-wrap: anywhere;
+        }
+
+        .description {
+            white-space: pre-line;
+            overflow-wrap: anywhere;
+        }
+
+        .details {
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+            font-size: 14px;
+            overflow-wrap: anywhere;
+        }
+
+        .details p { margin: 6px 0; }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 18px;
+        }
+
+        button {
+            padding: 10px 16px;
+            border: 1px solid var(--green);
+            border-radius: 4px;
+            background: var(--green);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .reject {
+            border-color: var(--red);
+            background: var(--red);
+        }
+
+        .empty {
+            margin-top: 24px;
+            padding: 30px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        footer {
+            margin-top: 50px;
+            padding: 24px 5%;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            text-align: center;
+            font-size: 13px;
+        }
+
+        @media (max-width: 650px) {
+            .reports { grid-template-columns: 1fr; }
+            .container { margin: 24px auto; }
+        }
+    </style>
+</head>
+
+<body>
+<header>
+    <a class="brand" href="{{ url_for('home') }}">Campus Lost & Found</a>
+
+    <nav>
+        <a href="{{ url_for('home') }}">Homepage</a>
+        <a href="{{ url_for('admin_users') }}">Manage Students</a>
+        <a href="{{ url_for('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+        <form id="logout-form" method="POST" action="{{ url_for('logout') }}" hidden></form>
+    </nav>
+</header>
+
+<main class="container">
+    <h1>Review Item Reports</h1>
+    <p class="muted">
+        Check each submission before approving it for public display.
+    </p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <div class="message">{{ message }}</div>
+        {% endfor %}
+    {% endwith %}
+
+    {% if pending_items %}
+        <div class="reports">
+            {% for item in pending_items %}
+                <article class="report">
+                    {% if item['image_filename'] %}
+                        <img
+                            src="{{ url_for('static', filename='uploads/' ~ item['image_filename']) }}"
+                            alt="Photo of {{ item['title'] }}"
+                            loading="lazy"
+                        >
+                    {% else %}
+                        <div class="no-image">No photo uploaded</div>
+                    {% endif %}
+
+                    <div class="content">
+                        <span class="badge">{{ item['status'] }} · Pending review</span>
+
+                        <h2>{{ item['title'] }}</h2>
+                        <p class="description">{{ item['description'] }}</p>
+
+                        <div class="details">
+                            <p><strong>Category:</strong> {{ item['category'] }}</p>
+                            <p><strong>Location:</strong> {{ item['location'] }}</p>
+                            <p><strong>Date:</strong> {{ item['date_lost_found'] }}</p>
+                            <p><strong>Contact:</strong> {{ item['contact'] }}</p>
+                            <p><strong>Report ID:</strong> {{ item['id'] }}</p>
+                            {% if item['created_at'] %}
+                                <p><strong>Submitted:</strong> {{ item['created_at'] }}</p>
+                            {% endif %}
+                        </div>
+
+                        <div class="actions">
+                            <form method="POST" action="{{ url_for('admin_items') }}">
+                                <input type="hidden" name="item_id" value="{{ item['id'] }}">
+                                <input type="hidden" name="action" value="approve">
+                                <button type="submit">Approve Report</button>
+                            </form>
+
+                            <form method="POST" action="{{ url_for('admin_items') }}"
+                                  onsubmit="return confirm('Reject and delete this report?');">
+                                <input type="hidden" name="item_id" value="{{ item['id'] }}">
+                                <input type="hidden" name="action" value="reject">
+                                <button class="reject" type="submit">Reject Report</button>
+                            </form>
+                        </div>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty">
+            <h2>No reports awaiting review</h2>
+            <p class="muted">New reports will appear here when students submit them.</p>
+        </div>
+    {% endif %}
+</main>
+
+<footer>
+    Campus Lost & Found · Administrator panel
+</footer>
+</body>
+</html>
+```

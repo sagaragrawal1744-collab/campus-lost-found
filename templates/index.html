@@ -1,0 +1,454 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Lost & Found</title>
+
+    <style>
+        :root {
+            --bg: #F7F6F2;
+            --surface: #FFFFFF;
+            --text: #252923;
+            --muted: #73776F;
+            --green: #355744;
+            --border: #DEDFD8;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+
+        header {
+            padding: 18px 5%;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .brand {
+            color: var(--text);
+            text-decoration: none;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        nav {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        nav a, .link {
+            color: var(--green);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        nav form { margin: 0; }
+
+        nav button {
+            padding: 0;
+            background: none;
+            border: none;
+            color: var(--green);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .container {
+            width: min(1100px, 90%);
+            margin: 38px auto;
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            font-size: clamp(30px, 5vw, 42px);
+            line-height: 1.2;
+        }
+
+        h2 { font-size: 24px; }
+
+        .muted { color: var(--muted); }
+
+        .hero p { margin: 0; }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 16px;
+            border: 1px solid var(--green);
+            border-radius: 4px;
+            background: var(--green);
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .button.secondary {
+            background: transparent;
+            color: var(--green);
+        }
+
+        .filters {
+            margin: 28px 0;
+            padding: 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+        }
+
+        .filters h2 {
+            margin: 0 0 14px;
+            font-size: 19px;
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        input, select {
+            width: 100%;
+            min-width: 0;
+            padding: 11px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            background: white;
+            color: var(--text);
+            font: inherit;
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-top: 14px;
+        }
+
+        button.search-button {
+            padding: 11px 18px;
+            border: 1px solid var(--green);
+            border-radius: 4px;
+            background: var(--green);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+
+        .section-heading h2 { margin: 0; }
+
+        .listings {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        .listing {
+            min-width: 0;
+            overflow: hidden;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+        }
+
+        .listing-image, .image-placeholder {
+            width: 100%;
+            height: 210px;
+        }
+
+        .listing-image {
+            display: block;
+            object-fit: cover;
+            background: #ECEDE7;
+        }
+
+        .image-placeholder {
+            display: grid;
+            place-items: center;
+            background: #ECEDE7;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .listing-content { padding: 18px; }
+
+        .badges {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .badge {
+            padding: 3px 9px;
+            background: #EDF2ED;
+            color: var(--green);
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .listing h3 {
+            margin: 0 0 8px;
+            font-size: 19px;
+            overflow-wrap: anywhere;
+        }
+
+        .description {
+            color: var(--muted);
+            font-size: 14px;
+            white-space: pre-line;
+            overflow-wrap: anywhere;
+        }
+
+        .details {
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+            font-size: 13px;
+            overflow-wrap: anywhere;
+        }
+
+        .details p { margin: 5px 0; }
+
+        .message {
+            margin: 16px 0;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            background: var(--surface);
+        }
+
+        .empty {
+            padding: 30px 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        footer {
+            margin-top: 55px;
+            padding: 24px 5%;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            text-align: center;
+            font-size: 13px;
+        }
+
+        a:focus-visible, button:focus-visible,
+        input:focus-visible, select:focus-visible {
+            outline: 2px solid var(--green);
+            outline-offset: 3px;
+        }
+
+        @media (max-width: 850px) {
+            .filter-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .listings { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+
+        @media (max-width: 560px) {
+            .listings, .filter-grid { grid-template-columns: 1fr; }
+            .container { margin: 25px auto; }
+        }
+    </style>
+</head>
+
+<body>
+<header>
+    <a class="brand" href="{{ url_for('home') }}">Campus Lost & Found</a>
+
+    <nav>
+        <a href="{{ url_for('home') }}">Home</a>
+
+        {% if session.get('user_id') %}
+            <a href="{{ url_for('report', status='lost') }}">Report Lost</a>
+            <a href="{{ url_for('report', status='found') }}">Report Found</a>
+
+            {% if session.get('role') == 'admin' %}
+                <a href="{{ url_for('admin_users') }}">Manage Students</a>
+                <a href="{{ url_for('admin_items') }}">Review Reports</a>
+            {% endif %}
+
+            <form method="POST" action="{{ url_for('logout') }}">
+                <button type="submit">Logout</button>
+            </form>
+        {% else %}
+            <a href="{{ url_for('login') }}">Login</a>
+            <a href="{{ url_for('register') }}">Register</a>
+        {% endif %}
+    </nav>
+</header>
+
+<main class="container">
+    <section class="hero">
+        <h1>Lost something? Find it here.</h1>
+        <p class="muted">
+            Report lost belongings, share found items, and help reunite
+            your campus community with their belongings.
+        </p>
+
+        {% if session.get('user_id') %}
+            <div class="actions">
+                <a class="button" href="{{ url_for('report', status='lost') }}">
+                    Report Lost Item
+                </a>
+                <a class="button secondary" href="{{ url_for('report', status='found') }}">
+                    Report Found Item
+                </a>
+            </div>
+        {% else %}
+            <div class="actions">
+                <a class="button" href="{{ url_for('login') }}">Login to Report</a>
+                <a class="button secondary" href="{{ url_for('register') }}">
+                    Create Student Account
+                </a>
+            </div>
+        {% endif %}
+    </section>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <div class="message">{{ message }}</div>
+        {% endfor %}
+    {% endwith %}
+
+    <section class="filters">
+        <h2>Find an item</h2>
+
+        <form method="GET" action="{{ url_for('home') }}">
+            <div class="filter-grid">
+                <input
+                    type="search"
+                    name="q"
+                    placeholder="Search item name or details..."
+                    value="{{ keyword }}"
+                >
+
+                <select name="category">
+                    <option value="">All categories</option>
+                    {% for category in categories %}
+                        <option
+                            value="{{ category['category'] }}"
+                            {% if selected_category == category['category'] %}selected{% endif %}
+                        >
+                            {{ category['category'] }}
+                        </option>
+                    {% endfor %}
+                </select>
+
+                <input
+                    type="text"
+                    name="location"
+                    placeholder="Search campus location..."
+                    value="{{ location }}"
+                >
+
+                <select name="status">
+                    <option value="">Lost and Found</option>
+                    <option value="Lost" {% if selected_status == 'Lost' %}selected{% endif %}>
+                        Lost
+                    </option>
+                    <option value="Found" {% if selected_status == 'Found' %}selected{% endif %}>
+                        Found
+                    </option>
+                    <option value="Returned" {% if selected_status == 'Returned' %}selected{% endif %}>
+                        Returned
+                    </option>
+                </select>
+            </div>
+
+            <div class="filter-actions">
+                <button class="search-button" type="submit">Search</button>
+                <a class="link" href="{{ url_for('home') }}">Clear filters</a>
+            </div>
+        </form>
+    </section>
+
+    <section>
+        <div class="section-heading">
+            <h2>Recent Reports</h2>
+            <span class="muted">{{ items|length }} item(s)</span>
+        </div>
+
+        {% if items %}
+            <div class="listings">
+                {% for item in items %}
+                    <article class="listing">
+                        {% if item['image_filename'] %}
+                            <img
+                                class="listing-image"
+                                src="{{ url_for('static', filename='uploads/' ~ item['image_filename']) }}"
+                                alt="Photo of {{ item['title'] }}"
+                                loading="lazy"
+                            >
+                        {% else %}
+                            <div class="image-placeholder">No photo available</div>
+                        {% endif %}
+
+                        <div class="listing-content">
+                            <div class="badges">
+                                <span class="badge">{{ item['status'] }}</span>
+                                <span class="badge">{{ item['category'] }}</span>
+                            </div>
+
+                            <h3>{{ item['title'] }}</h3>
+                            <p class="description">{{ item['description'] }}</p>
+
+                            <div class="details">
+                                <p><strong>Location:</strong> {{ item['location'] }}</p>
+                                <p><strong>Date:</strong> {{ item['date_lost_found'] }}</p>
+                                <p><strong>Contact:</strong> {{ item['contact'] }}</p>
+                            </div>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty">
+                <h3>No matching items found</h3>
+                <p class="muted">
+                    Try changing your search filters, or check again later.
+                </p>
+            </div>
+        {% endif %}
+    </section>
+</main>
+
+<footer>
+    Campus Lost & Found · Helping campus belongings find their owners.
+</footer>
+</body>
+</html>
+```

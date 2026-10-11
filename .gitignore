@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# Database and private data
+database.db
+*.sqlite
+*.sqlite3
+
+# Uploaded photos
+static/uploads/*
+!static/uploads/.gitkeep
+
+# Editor and OS files
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Claude local configuration
+.claude/
+CLAUDE.md

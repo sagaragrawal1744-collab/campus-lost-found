@@ -1,0 +1,176 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report {{ status }} Item | Campus Lost & Found</title>
+    <style>
+        :root {
+            --background: #F7F6F2;
+            --surface: #FFFFFF;
+            --text: #252923;
+            --muted: #73776F;
+            --green: #355744;
+            --border: #DEDFD8;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            background: var(--background);
+            color: var(--text);
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+
+        .container {
+            width: min(680px, 90%);
+            margin: 50px auto;
+        }
+
+        a { color: var(--green); }
+
+        .back {
+            display: inline-block;
+            margin-bottom: 24px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .form-card {
+            padding: 28px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            font-size: clamp(28px, 5vw, 36px);
+        }
+
+        .intro {
+            margin: 0 0 24px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        form {
+            display: grid;
+            gap: 8px;
+        }
+
+        label {
+            margin-top: 8px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            background: white;
+            color: var(--text);
+            font: inherit;
+        }
+
+        textarea {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        input[type="file"] {
+            padding: 9px;
+        }
+
+        .hint {
+            margin: 0;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        button {
+            margin-top: 18px;
+            padding: 12px 18px;
+            border: 1px solid var(--green);
+            border-radius: 4px;
+            background: var(--green);
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .message {
+            margin-bottom: 16px;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        a:focus-visible, input:focus-visible, textarea:focus-visible,
+        select:focus-visible, button:focus-visible {
+            outline: 2px solid var(--green);
+            outline-offset: 3px;
+        }
+
+        @media (max-width: 500px) {
+            .container { margin: 24px auto; }
+            .form-card { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <a class="back" href="{{ url_for('home') }}">← Back to homepage</a>
+
+        <section class="form-card">
+            <h1>Report a {{ status|lower }} item</h1>
+            <p class="intro">Provide accurate details to help reunite belongings with their owners. Your report will be reviewed by an admin before publication.</p>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% for category, message in messages %}
+                    <div class="message">{{ message }}</div>
+                {% endfor %}
+            {% endwith %}
+
+            <form method="POST" enctype="multipart/form-data">
+                <label for="title">Item name</label>
+                <input id="title" name="title" type="text" maxlength="100" required value="{{ request.form.get('title', '') }}" placeholder="e.g. Black wallet">
+
+                <label for="description">Description</label>
+                <textarea id="description" name="description" maxlength="1000" required placeholder="Describe the item and any identifying details">{{ request.form.get('description', '') }}</textarea>
+
+                <label for="category">Category</label>
+                <select id="category" name="category" required>
+                    <option value="">Select a category</option>
+                    {% for option in ['Electronics', 'ID Card', 'Wallet', 'Keys', 'Books', 'Bag', 'Clothing', 'Other'] %}
+                        <option value="{{ option }}" {% if request.form.get('category') == option %}selected{% endif %}>{{ option }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="location">Location on campus</label>
+                <input id="location" name="location" type="text" maxlength="150" required value="{{ request.form.get('location', '') }}" placeholder="e.g. Library, Block A">
+
+                <label for="date_lost_found">Date lost or found</label>
+                <input id="date_lost_found" name="date_lost_found" type="date" required value="{{ request.form.get('date_lost_found', '') }}">
+
+                <label for="contact">Contact information</label>
+                <input id="contact" name="contact" type="text" maxlength="100" required value="{{ request.form.get('contact', '') }}" placeholder="College email or contact number">
+
+                <label for="image">Item photo (optional)</label>
+                <input id="image" name="image" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
+                <p class="hint">JPG, PNG or WebP. Maximum size: 5 MB.</p>
+
+                <button type="submit">Submit for admin review</button>
+            </form>
+        </section>
+    </main>
+</body>
+</html>
+```
